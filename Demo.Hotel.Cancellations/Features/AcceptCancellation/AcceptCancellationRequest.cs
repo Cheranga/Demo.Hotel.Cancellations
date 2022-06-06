@@ -2,7 +2,7 @@
 
 namespace Demo.Hotel.Cancellations.Features.AcceptCancellation;
 
-public class AcceptCancellationRequest : IDto
+public class AcceptCancellationRequest : IIdentifier
 {
     public string BookingReferenceId { get; set; }
     public string CorrelationId { get; set; }

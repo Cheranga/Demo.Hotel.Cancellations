@@ -1,6 +1,6 @@
 ﻿namespace Demo.Hotel.Cancellations.Shared;
 
-public interface IDto
+public interface IIdentifier
 {
     string CorrelationId { get; set; }
 }
