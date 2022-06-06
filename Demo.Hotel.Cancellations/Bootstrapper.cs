@@ -1,9 +1,12 @@
 ﻿using Azure.Extensions.AspNetCore.Configuration.Secrets;
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
+using Azure.Storage;
 using Azure.Storage.Queues;
+using Demo.Hotel.Cancellations.Features;
 using Demo.Hotel.Cancellations.Features.CancelHotelBooking;
 using Demo.Hotel.Cancellations.Features.ProcessHotelCancellation;
+using Demo.Hotel.Cancellations.Features.Shared;
 using Demo.Hotel.Cancellations.Infrastructure;
 using Demo.Hotel.Cancellations.Infrastructure.Messaging;
 using Demo.Hotel.Cancellations.Shared;
@@ -50,9 +53,23 @@ public static class Bootstrapper
 
     private static void RegisterAzureClients(WebApplicationBuilder builder)
     {
-        var storageConnectionString =  builder.Configuration["StorageConnectionString"];
+        var storageAccount =  builder.Configuration["StorageAccount"];
         
-        builder.Services.AddAzureClients(x => { x.AddQueueServiceClient(storageConnectionString); });
+        builder.Services.AddAzureClients(x =>
+        {
+            if (builder.Environment.IsDevelopment())
+            {
+                x.AddQueueServiceClient(storageAccount);
+                return;
+            }
+
+            var messagingConfig = builder.Configuration.GetSection(nameof(MessagingConfig)).Get<MessagingConfig>();
+            x.AddQueueServiceClient(new Uri($"https://{storageAccount}.queue.core.windows.net/{messagingConfig.HotelCancellationsQueue}"))
+                .WithCredential(new DefaultAzureCredential(new DefaultAzureCredentialOptions
+                {
+                    ExcludeManagedIdentityCredential = false
+                }));
+        });
     }
     
     private static void RegisterConfigurations(WebApplicationBuilder builder)
@@ -61,11 +78,17 @@ public static class Bootstrapper
         {
             var configuration = builder.Configuration;
 
-            var hotelCancellationQueue = configuration[nameof(HotelCancellationsConfig.HotelCancellationsQueue)];
-            int.TryParse(configuration[nameof(HotelCancellationsConfig.PollingSeconds)], out var pollingSeconds);
-            int.TryParse(configuration[nameof(HotelCancellationsConfig.VisibilityInSeconds)], out var visibilityInSeconds);
+            if (builder.Environment.IsDevelopment())
+            {
+                var messagingConfig = configuration.GetSection(nameof(MessagingConfig)).Get<MessagingConfig>();
+                return messagingConfig;
+            }
 
-            return new HotelCancellationsConfig
+            var hotelCancellationQueue = configuration[nameof(MessagingConfig.HotelCancellationsQueue)];
+            int.TryParse(configuration[nameof(MessagingConfig.PollingSeconds)], out var pollingSeconds);
+            int.TryParse(configuration[nameof(MessagingConfig.VisibilityInSeconds)], out var visibilityInSeconds);
+            
+            return new MessagingConfig
             {
                 HotelCancellationsQueue = hotelCancellationQueue,
                 PollingSeconds = pollingSeconds,

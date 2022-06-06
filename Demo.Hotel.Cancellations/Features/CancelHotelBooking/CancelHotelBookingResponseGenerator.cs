@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using Demo.Hotel.Cancellations.Features.Shared;
 using Demo.Hotel.Cancellations.Shared;
 using Microsoft.AspNetCore.Mvc;
 
@@ -6,7 +7,7 @@ namespace Demo.Hotel.Cancellations.Features.CancelHotelBooking;
 
 public class CancelHotelBookingResponseGenerator : IResponseGenerator<CancelHotelBookingRequest>
 {
-    public IActionResult GetResponse(Result operation)
+    public IActionResult GetResponse(CancelHotelBookingRequest request, Result operation)
     {
         if (operation.Status)
         {

@@ -1,13 +1,13 @@
-﻿namespace Demo.Hotel.Cancellations.Infrastructure;
+﻿namespace Demo.Hotel.Cancellations.Infrastructure.Messaging;
 
-public class HotelCancellationsConfig
+public class MessagingConfig
 {
     public string HotelCancellationsQueue { get; set; }
     public int PollingSeconds { get; set; }
 
     public int VisibilityInSeconds { get; set; }
 
-    public HotelCancellationsConfig()
+    public MessagingConfig()
     {
         HotelCancellationsQueue = string.Empty;
     }

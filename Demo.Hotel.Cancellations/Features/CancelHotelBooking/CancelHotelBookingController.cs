@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Demo.Hotel.Cancellations.Features.Shared;
 using Demo.Hotel.Cancellations.Shared;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,6 +21,6 @@ public class CancelHotelBookingController : ControllerBase
     public async Task<IActionResult> AcceptCancellationAsync([FromBody] [Required] CancelHotelBookingRequest request)
     {
         var operation = await _service.CancelAsync(request);
-        return _responseGenerator.GetResponse(operation);
+        return _responseGenerator.GetResponse(request, operation);
     }
 }

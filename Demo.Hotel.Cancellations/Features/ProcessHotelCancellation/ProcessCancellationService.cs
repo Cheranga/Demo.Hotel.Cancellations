@@ -22,7 +22,7 @@ public class ProcessCancellationService : BackgroundService
         {
             using (var scope = _serviceProvider.CreateScope())
             {
-                var hotelCancellationConfig = scope.ServiceProvider.GetRequiredService<HotelCancellationsConfig>();
+                var hotelCancellationConfig = scope.ServiceProvider.GetRequiredService<MessagingConfig>();
                 var readMessageOperation = await _messageReader.ReadMessageAsync<CancelHotelBookingRequest>(new MessageReadOptions(hotelCancellationConfig.HotelCancellationsQueue, hotelCancellationConfig.VisibilityInSeconds), stoppingToken);
 
                 if (!readMessageOperation.Status || readMessageOperation.Data == null) 

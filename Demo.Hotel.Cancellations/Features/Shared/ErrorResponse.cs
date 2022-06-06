@@ -1,4 +1,4 @@
-﻿namespace Demo.Hotel.Cancellations.Shared;
+﻿namespace Demo.Hotel.Cancellations.Features.Shared;
 
 public class ErrorResponse
 {

@@ -29,9 +29,23 @@ module containerInstance 'aci/template.bicep' = {
     hotelCancellationQueue: hotelCancellationQueue
     pollingSeconds: pollingInSeconds
     visibilityInSeconds: visibilityInSeconds
-    storageConnectionString: storageAccount.outputs.storageAccountConnectionString
+    storageAccount: storageAccount.name    
   }
   dependsOn: [
+    storageAccount
+  ]
+}
+
+module rbacqueue 'rbac/template.bicep'= {
+  name: '${appName}rbacqueues'
+  params: {    
+    accessibility: 'queue_read_write'
+    friendlyName: '${appName}queueaccess'
+    principalId: containerInstance.outputs.managedId
+    storageAccountName: storageAccount.name
+  }
+  dependsOn:[
+    containerInstance
     storageAccount
   ]
 }

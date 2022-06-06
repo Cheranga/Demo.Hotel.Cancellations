@@ -28,11 +28,13 @@ param memoryInGb int = 1
 param restartPolicy string = 'OnFailure'
 
 @secure()
-param storageConnectionString string
+param storageAccount string
 
 param hotelCancellationQueue string
 param visibilityInSeconds int
 param pollingSeconds int
+
+var aspNetCoreEnvironment = 'Production'
 
 resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2021-09-01' = {
   name: name
@@ -60,8 +62,12 @@ resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2021-09-01'
           }
           environmentVariables: [
             {
-              name: 'StorageConnectionString'
-              secureValue: storageConnectionString
+              name: 'ASPNETCORE_ENVIRONMENT'
+              secureValue: aspNetCoreEnvironment
+            }
+            {
+              name: 'StorageAccount'
+              secureValue: storageAccount
             }
             {
               name: 'HotelCancellationsQueue'

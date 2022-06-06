@@ -1,4 +1,6 @@
 ﻿using Azure.Storage.Queues;
+using Demo.Hotel.Cancellations.Features;
+using Demo.Hotel.Cancellations.Features.Shared;
 using Demo.Hotel.Cancellations.Shared;
 using Newtonsoft.Json;
 
@@ -11,11 +13,11 @@ public interface IMessagePublisher
 
 public class MessagePublisher : IMessagePublisher
 {
-    private readonly HotelCancellationsConfig _config;
+    private readonly MessagingConfig _config;
     private readonly QueueServiceClient _queueServiceClient;
     private readonly ILogger<MessagePublisher> _logger;
 
-    public MessagePublisher(HotelCancellationsConfig config, QueueServiceClient queueServiceClient, ILogger<MessagePublisher> logger)
+    public MessagePublisher(MessagingConfig config, QueueServiceClient queueServiceClient, ILogger<MessagePublisher> logger)
     {
         _config = config;
         _queueServiceClient = queueServiceClient;
@@ -25,6 +27,7 @@ public class MessagePublisher : IMessagePublisher
     public async Task<Result> PublishAsync<TData>(TData? data) where TData : IIdentifier
     {
         var queueClient = _queueServiceClient.GetQueueClient(_config.HotelCancellationsQueue);
+        await queueClient.CreateIfNotExistsAsync();
         
         if (data == null)
         {

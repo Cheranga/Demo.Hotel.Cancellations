@@ -1,6 +1,6 @@
-﻿namespace Demo.Hotel.Cancellations.Shared;
+﻿namespace Demo.Hotel.Cancellations.Features.Shared;
 
-public class ErrorCodes
+public static class ErrorCodes
 {
     public const string EmptyData = nameof(EmptyData);
     public const string InvalidRequest = nameof(InvalidRequest);
@@ -9,7 +9,7 @@ public class ErrorCodes
     public const string MessageReadError = nameof(MessageReadError);
 }
 
-public class ErrorMessages
+public static class ErrorMessages
 {
     public const string EmptyData = "empty data";
     public const string InvalidRequest = "invalid request";

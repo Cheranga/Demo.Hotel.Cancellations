@@ -1,4 +1,5 @@
-﻿using Demo.Hotel.Cancellations.Infrastructure.Messaging;
+﻿using Demo.Hotel.Cancellations.Features.Shared;
+using Demo.Hotel.Cancellations.Infrastructure.Messaging;
 using Demo.Hotel.Cancellations.Shared;
 using FluentValidation;
 
