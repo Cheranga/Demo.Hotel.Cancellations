@@ -1,6 +1,6 @@
 ###
 # @name=cancelhotelbooking
-POST https://localhost:7229/api/cancel/hotel
+POST http://localhost:8080/api/cancel/hotel
 Content-Type: application/json
 
 {

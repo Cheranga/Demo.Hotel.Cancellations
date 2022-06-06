@@ -1,0 +1,14 @@
+version: '3.4'
+services:
+  productsapi:
+    build:
+      dockerfile: Demo.Hotel.Cancellations/Dockerfile
+    environment:
+      StorageConnectionString: "UseDevelopmentStorage=true"
+      HotelCancellationsConfig--HotelCancellationsQueue: "hotelcancellations"
+      HotelCancellationsConfig--VisibilityInSeconds: "300"
+      HotelCancellationsConfig--PollingSeconds: "10"
+    volumes:
+      - ${APPDATA}\AppData\Roaming\microsoft\UserSecrets\:/root/.microsoft/usersecrets
+    ports:
+      - "8080:80"
