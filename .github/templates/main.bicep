@@ -42,7 +42,7 @@ module rbacqueue 'rbac/template.bicep'= {
     accessibility: 'queue_read_write'
     friendlyName: '${appName}queueaccess'
     principalId: containerInstance.outputs.managedId
-    storageAccountName: storageAccount.name
+    storageAccountName: storageName
   }
   dependsOn:[
     containerInstance
