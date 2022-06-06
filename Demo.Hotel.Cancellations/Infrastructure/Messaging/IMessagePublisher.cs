@@ -2,7 +2,7 @@
 using Demo.Hotel.Cancellations.Shared;
 using Newtonsoft.Json;
 
-namespace Demo.Hotel.Cancellations.Infrastructure;
+namespace Demo.Hotel.Cancellations.Infrastructure.Messaging;
 
 public interface IMessagePublisher
 {

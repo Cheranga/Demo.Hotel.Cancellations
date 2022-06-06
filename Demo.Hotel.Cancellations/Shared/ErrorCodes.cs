@@ -6,6 +6,7 @@ public class ErrorCodes
     public const string InvalidRequest = nameof(InvalidRequest);
     public const string InternalError = nameof(InternalError);
     public const string PublishMessageError = nameof(PublishMessageError);
+    public const string MessageReadError = nameof(MessageReadError);
 }
 
 public class ErrorMessages
@@ -14,4 +15,6 @@ public class ErrorMessages
     public const string InvalidRequest = "invalid request";
     public const string InternalError = "internal error occurred";
     public const string PublishMessageError = "error occurred when publishing the message";
+    public const string QueueDoesNotExist = "queue does not exist";
+    public const string MessageReadError = "error occurred when reading message";
 }

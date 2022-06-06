@@ -1,0 +1,9 @@
+###
+# @name=cancelhotelbooking
+POST https://localhost:7229/api/cancel/hotel
+Content-Type: application/json
+
+{
+  "correlationId": "666",
+  "bookingReferenceId": "LT111"
+}

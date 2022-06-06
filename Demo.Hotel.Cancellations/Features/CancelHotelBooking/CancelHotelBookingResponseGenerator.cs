@@ -2,9 +2,9 @@
 using Demo.Hotel.Cancellations.Shared;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Demo.Hotel.Cancellations.Features.AcceptCancellation;
+namespace Demo.Hotel.Cancellations.Features.CancelHotelBooking;
 
-public class AcceptCancellationResponseGenerator : IResponseGenerator<AcceptCancellationRequest>
+public class CancelHotelBookingResponseGenerator : IResponseGenerator<CancelHotelBookingRequest>
 {
     public IActionResult GetResponse(Result operation)
     {

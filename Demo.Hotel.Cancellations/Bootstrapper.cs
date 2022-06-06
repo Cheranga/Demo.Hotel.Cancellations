@@ -2,8 +2,10 @@
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
 using Azure.Storage.Queues;
-using Demo.Hotel.Cancellations.Features.AcceptCancellation;
+using Demo.Hotel.Cancellations.Features.CancelHotelBooking;
+using Demo.Hotel.Cancellations.Features.ProcessHotelCancellation;
 using Demo.Hotel.Cancellations.Infrastructure;
+using Demo.Hotel.Cancellations.Infrastructure.Messaging;
 using Demo.Hotel.Cancellations.Shared;
 using FluentValidation;
 using Microsoft.Extensions.Azure;
@@ -25,18 +27,20 @@ public static class Bootstrapper
 
     private static void RegisterHandlers(IServiceCollection services)
     {
-        services.AddScoped<IAcceptCancellationService, AcceptCancellationService>();
+        services.AddScoped<ICancelHotelBookingService, CancelHotelBookingService>();
+        services.AddHostedService<ProcessCancellationService>();
     }
 
     private static void RegisterResponseGenerators(IServiceCollection services)
     {
-        services.AddScoped<IResponseGenerator<AcceptCancellationRequest>, AcceptCancellationResponseGenerator>();
+        services.AddScoped<IResponseGenerator<CancelHotelBookingRequest>, CancelHotelBookingResponseGenerator>();
     }
 
     private static void RegisterInfrastructure(WebApplicationBuilder builder)
     {
         RegisterAzureClients(builder);
         builder.Services.AddScoped<IMessagePublisher, MessagePublisher>();
+        builder.Services.AddSingleton<IMessageReader, MessageReader>();
     }
 
     private static void RegisterValidators(IServiceCollection services)

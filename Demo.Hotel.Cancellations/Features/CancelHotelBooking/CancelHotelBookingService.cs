@@ -1,30 +1,30 @@
-﻿using Demo.Hotel.Cancellations.Infrastructure;
+﻿using Demo.Hotel.Cancellations.Infrastructure.Messaging;
 using Demo.Hotel.Cancellations.Shared;
 using FluentValidation;
 
-namespace Demo.Hotel.Cancellations.Features.AcceptCancellation;
+namespace Demo.Hotel.Cancellations.Features.CancelHotelBooking;
 
-public interface IAcceptCancellationService
+public interface ICancelHotelBookingService
 {
-    Task<Result> CancelAsync(AcceptCancellationRequest request);
+    Task<Result> CancelAsync(CancelHotelBookingRequest request);
 }
 
-public class AcceptCancellationService : IAcceptCancellationService
+public class CancelHotelBookingService : ICancelHotelBookingService
 {
-    private readonly IValidator<AcceptCancellationRequest> _validator;
+    private readonly IValidator<CancelHotelBookingRequest> _validator;
     private readonly IMessagePublisher _messagePublisher;
-    private readonly ILogger<AcceptCancellationService> _logger;
+    private readonly ILogger<CancelHotelBookingService> _logger;
 
-    public AcceptCancellationService(IValidator<AcceptCancellationRequest> validator,
+    public CancelHotelBookingService(IValidator<CancelHotelBookingRequest> validator,
         IMessagePublisher messagePublisher,
-        ILogger<AcceptCancellationService> logger)
+        ILogger<CancelHotelBookingService> logger)
     {
         _validator = validator;
         _messagePublisher = messagePublisher;
         _logger = logger;
     }
     
-    public async Task<Result> CancelAsync(AcceptCancellationRequest request)
+    public async Task<Result> CancelAsync(CancelHotelBookingRequest request)
     {
         var validationResult = await _validator.ValidateAsync(request);
         if (!validationResult.IsValid)
