@@ -63,7 +63,7 @@ resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2021-09-01'
           environmentVariables: [
             {
               name: 'ASPNETCORE_ENVIRONMENT'
-              secureValue: aspNetCoreEnvironment
+              value: aspNetCoreEnvironment
             }
             {
               name: 'StorageAccount'
