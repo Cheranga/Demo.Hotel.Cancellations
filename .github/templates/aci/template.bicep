@@ -64,15 +64,15 @@ resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2021-09-01'
               secureValue: storageConnectionString
             }
             {
-              name: 'HotelCancellationsConfig--HotelCancellationsQueue'
+              name: 'HotelCancellationsQueue'
               value: hotelCancellationQueue
             }
             {
-              name: 'HotelCancellationsConfig--VisibilityInSeconds'
+              name: 'VisibilityInSeconds'
               value: string(visibilityInSeconds)
             }
             {
-              name: 'HotelCancellationsConfig--PollingSeconds'
+              name: 'PollingSeconds'
               value: string(pollingSeconds)
             }
           ]
