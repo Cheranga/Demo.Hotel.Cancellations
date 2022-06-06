@@ -1,0 +1,36 @@
+name: "Demo.Hotel.Cancellations"
+concurrency: "Demo.Hotel.Cancellations"
+env: 
+  APP_NAME: democancelhotel
+  RG_NAME: rg-cancel-hotel
+  RG_LOCATION: australiasoutheast
+  DOTNET_VERSION: 6.0.x
+  PUBLISHED_PATH: ./published
+
+on:
+
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+    
+jobs: 
+  build:
+    name: Build and Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install .NET Core
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore projects
+        run: dotnet restore
+
+      - name: Build Projects      
+        run: dotnet build --no-restore -c Release 
