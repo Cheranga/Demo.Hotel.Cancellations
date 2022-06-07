@@ -1,15 +1,19 @@
 ﻿using Azure.Data.Tables;
+using Demo.Hotel.Cancellations.Features.Shared;
 using Demo.Hotel.Cancellations.Shared;
+using FluentValidation;
 
 namespace Demo.Hotel.Cancellations.Infrastructure.DataAccess;
 
 public abstract class CommandHandlerBase<TCommand> : ICommandHandler<TCommand> where TCommand : ICommand
 {
+    private readonly IValidator<TCommand> _validator;
     private readonly TableServiceClient _serviceClient;
     private readonly ILogger<CommandHandlerBase<TCommand>> _logger;
 
-    protected CommandHandlerBase( TableServiceClient serviceClient, ILogger<CommandHandlerBase<TCommand>> logger)
+    protected CommandHandlerBase(IValidator<TCommand> validator, TableServiceClient serviceClient, ILogger<CommandHandlerBase<TCommand>> logger)
     {
+        _validator = validator;
         _serviceClient = serviceClient;
         _logger = logger;
     }
@@ -22,6 +26,12 @@ public abstract class CommandHandlerBase<TCommand> : ICommandHandler<TCommand> w
     {
         try
         {
+            var validationResult = await _validator.ValidateAsync(command);
+            if (!validationResult.IsValid)
+            {
+                _logger.LogWarning(ErrorMessages.InvalidSaveCommand);
+            }
+            
             var tableClient = _serviceClient.GetTableClient(TableName);
             await tableClient.CreateIfNotExistsAsync();
 

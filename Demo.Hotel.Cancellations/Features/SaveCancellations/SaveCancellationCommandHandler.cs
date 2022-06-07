@@ -2,6 +2,7 @@
 using Demo.Hotel.Cancellations.Features.Shared;
 using Demo.Hotel.Cancellations.Infrastructure.DataAccess;
 using Demo.Hotel.Cancellations.Infrastructure.Messaging;
+using FluentValidation;
 
 namespace Demo.Hotel.Cancellations.Features.SaveCancellations;
 
@@ -9,7 +10,10 @@ public class SaveCancellationCommandHandler : CommandHandlerBase<SaveCancellatio
 {
     private readonly MessagingConfig _config;
 
-    public SaveCancellationCommandHandler(MessagingConfig config, TableServiceClient serviceClient, ILogger<SaveCancellationCommandHandler> logger) : base(serviceClient, logger)
+    public SaveCancellationCommandHandler(IValidator<SaveCancellationCommand> validator,
+        MessagingConfig config,
+        TableServiceClient serviceClient,
+        ILogger<SaveCancellationCommandHandler> logger) : base(validator, serviceClient, logger)
     {
         _config = config;
     }
