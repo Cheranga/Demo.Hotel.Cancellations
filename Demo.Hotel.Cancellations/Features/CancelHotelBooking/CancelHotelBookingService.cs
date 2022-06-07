@@ -35,6 +35,8 @@ public class CancelHotelBookingService : ICancelHotelBookingService
         }
 
         var publishOperation = await _messagePublisher.PublishAsync(request);
+        
+        _logger.LogInformation("{CorrelationId} cancel booking request submitted", request.CorrelationId);
         return publishOperation;
     }
 }

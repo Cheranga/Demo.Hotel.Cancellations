@@ -12,6 +12,7 @@ using Demo.Hotel.Cancellations.Infrastructure.Messaging;
 using Demo.Hotel.Cancellations.Shared;
 using FluentValidation;
 using Microsoft.Extensions.Azure;
+using Serilog;
 
 namespace Demo.Hotel.Cancellations;
 
@@ -21,11 +22,21 @@ public static class Bootstrapper
     {
         var services = builder.Services;
 
+        RegisterLogging(builder);
         RegisterConfigurations(builder);
         RegisterHandlers(services);
         RegisterResponseGenerators(services);
         RegisterValidators(services);
         RegisterInfrastructure(builder);
+    }
+
+    private static void RegisterLogging(WebApplicationBuilder builder)
+    {
+        builder.Host.UseSerilog((_, configuration) =>
+        {
+            configuration.MinimumLevel.Debug()
+                .WriteTo.Console(outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}");
+        });
     }
 
     private static void RegisterHandlers(IServiceCollection services)
@@ -63,7 +74,6 @@ public static class Bootstrapper
                 return;
             }
 
-            var messagingConfig = builder.Configuration.GetSection(nameof(MessagingConfig)).Get<MessagingConfig>();
             x.AddQueueServiceClient(new Uri($"https://{storageAccount}.queue.core.windows.net"))
                 .WithCredential(new DefaultAzureCredential(new DefaultAzureCredentialOptions
                 {
