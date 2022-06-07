@@ -67,7 +67,7 @@ resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2021-09-01'
             }
             {
               name: 'StorageAccount'
-              secureValue: storageAccount
+              value: storageAccount
             }
             {
               name: 'HotelCancellationsQueue'
