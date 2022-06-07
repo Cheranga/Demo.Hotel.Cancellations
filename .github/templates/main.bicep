@@ -29,7 +29,7 @@ module containerInstance 'aci/template.bicep' = {
     hotelCancellationQueue: hotelCancellationQueue
     pollingSeconds: pollingInSeconds
     visibilityInSeconds: visibilityInSeconds
-    storageAccount: storageAccount.name    
+    storageAccount: storageName  
   }
   dependsOn: [
     storageAccount
