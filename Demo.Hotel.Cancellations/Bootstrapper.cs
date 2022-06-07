@@ -59,8 +59,18 @@ public static class Bootstrapper
     {
         builder.Services.AddScoped(_ =>
         {
-            var databaseConfig = builder.Configuration.GetSection(nameof(HotelCancellationsConfig)).Get<HotelCancellationsConfig>();
-            return databaseConfig;
+            var configuration = builder.Configuration;
+
+            var hotelCancellationQueue = configuration[nameof(HotelCancellationsConfig.HotelCancellationsQueue)];
+            int.TryParse(configuration[nameof(HotelCancellationsConfig.PollingSeconds)], out var pollingSeconds);
+            int.TryParse(configuration[nameof(HotelCancellationsConfig.VisibilityInSeconds)], out var visibilityInSeconds);
+
+            return new HotelCancellationsConfig
+            {
+                HotelCancellationsQueue = hotelCancellationQueue,
+                PollingSeconds = pollingSeconds,
+                VisibilityInSeconds = visibilityInSeconds
+            };
         });
     }
 }
