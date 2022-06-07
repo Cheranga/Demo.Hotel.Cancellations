@@ -64,7 +64,7 @@ public static class Bootstrapper
             }
 
             var messagingConfig = builder.Configuration.GetSection(nameof(MessagingConfig)).Get<MessagingConfig>();
-            x.AddQueueServiceClient(new Uri($"https://{storageAccount}.queue.core.windows.net/{messagingConfig.HotelCancellationsQueue}"))
+            x.AddQueueServiceClient(new Uri($"https://{storageAccount}.queue.core.windows.net"))
                 .WithCredential(new DefaultAzureCredential(new DefaultAzureCredentialOptions
                 {
                     ExcludeManagedIdentityCredential = false
