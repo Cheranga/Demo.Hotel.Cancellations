@@ -6,8 +6,10 @@ using Azure.Storage.Queues;
 using Demo.Hotel.Cancellations.Features;
 using Demo.Hotel.Cancellations.Features.CancelHotelBooking;
 using Demo.Hotel.Cancellations.Features.ProcessHotelCancellation;
+using Demo.Hotel.Cancellations.Features.SaveCancellations;
 using Demo.Hotel.Cancellations.Features.Shared;
 using Demo.Hotel.Cancellations.Infrastructure;
+using Demo.Hotel.Cancellations.Infrastructure.DataAccess;
 using Demo.Hotel.Cancellations.Infrastructure.Messaging;
 using Demo.Hotel.Cancellations.Shared;
 using FluentValidation;
@@ -55,6 +57,8 @@ public static class Bootstrapper
         RegisterAzureClients(builder);
         builder.Services.AddScoped<IMessagePublisher, MessagePublisher>();
         builder.Services.AddSingleton<IMessageReader, MessageReader>();
+
+        builder.Services.AddScoped<ICommandHandler<SaveCancellationCommand>, SaveCancellationCommandHandler>();
     }
 
     private static void RegisterValidators(IServiceCollection services)
@@ -64,24 +68,26 @@ public static class Bootstrapper
 
     private static void RegisterAzureClients(WebApplicationBuilder builder)
     {
-        var storageAccount =  builder.Configuration["StorageAccount"];
-        
+        var storageAccount = builder.Configuration["StorageAccount"];
+
         builder.Services.AddAzureClients(x =>
         {
             if (builder.Environment.IsDevelopment())
             {
                 x.AddQueueServiceClient(storageAccount);
+                x.AddTableServiceClient(storageAccount);
                 return;
             }
 
-            x.AddQueueServiceClient(new Uri($"https://{storageAccount}.queue.core.windows.net"))
-                .WithCredential(new DefaultAzureCredential(new DefaultAzureCredentialOptions
-                {
-                    ExcludeManagedIdentityCredential = false
-                }));
+            var credentials = new DefaultAzureCredential(new DefaultAzureCredentialOptions
+            {
+                ExcludeManagedIdentityCredential = false
+            });
+            x.AddQueueServiceClient(new Uri($"https://{storageAccount}.queue.core.windows.net")).WithCredential(credentials);
+            x.AddTableServiceClient(new Uri($"https://{storageAccount}.table.core.windows.net")).WithCredential(credentials);
         });
     }
-    
+
     private static void RegisterConfigurations(WebApplicationBuilder builder)
     {
         builder.Services.AddScoped(_ =>
@@ -95,11 +101,13 @@ public static class Bootstrapper
             }
 
             var hotelCancellationQueue = configuration[nameof(MessagingConfig.HotelCancellationsQueue)];
+            var cancellationsTable = configuration[nameof(MessagingConfig.CancellationsTable)];
             int.TryParse(configuration[nameof(MessagingConfig.PollingSeconds)], out var pollingSeconds);
             int.TryParse(configuration[nameof(MessagingConfig.VisibilityInSeconds)], out var visibilityInSeconds);
-            
+
             return new MessagingConfig
             {
+                CancellationsTable = cancellationsTable,
                 HotelCancellationsQueue = hotelCancellationQueue,
                 PollingSeconds = pollingSeconds,
                 VisibilityInSeconds = visibilityInSeconds

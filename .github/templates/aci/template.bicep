@@ -33,6 +33,7 @@ param storageAccount string
 param hotelCancellationQueue string
 param visibilityInSeconds int
 param pollingSeconds int
+param cancellationsTable string
 
 var aspNetCoreEnvironment = 'Production'
 
@@ -68,6 +69,10 @@ resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2021-09-01'
             {
               name: 'StorageAccount'
               value: storageAccount
+            }
+            {
+              name: 'CancellationsTable'
+              value: cancellationsTable
             }
             {
               name: 'HotelCancellationsQueue'

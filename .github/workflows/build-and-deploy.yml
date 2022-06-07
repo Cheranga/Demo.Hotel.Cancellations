@@ -85,6 +85,7 @@ jobs:
           HotelCancellationQueue: 'hotelcancellations'
           PollingInSeconds: 30
           VisibilityInSeconds: 300
+          CancellationsTable: 'cancellations'
         with:
           failOnStdErr: false
           deploymentName: ${{ env.BUILD_VERSION }}-${{ env.APP_NAME }}
@@ -99,6 +100,7 @@ jobs:
             hotelCancellationQueue=${{ env.HotelCancellationQueue }}
             pollingInSeconds=${{ env.PollingInSeconds }}
             visibilityInSeconds=${{ env.VisibilityInSeconds }}
+            cancellationsTable=${{ env.CancellationsTable }}
 
       - name: Logout from Azure CLI     
         uses: azure/CLI@v1

@@ -1,0 +1,54 @@
+﻿using Azure.Data.Tables;
+using Demo.Hotel.Cancellations.Shared;
+
+namespace Demo.Hotel.Cancellations.Infrastructure.DataAccess;
+
+public abstract class CommandHandlerBase<TCommand> : ICommandHandler<TCommand> where TCommand : ICommand
+{
+    private readonly TableServiceClient _serviceClient;
+    private readonly ILogger<CommandHandlerBase<TCommand>> _logger;
+
+    protected CommandHandlerBase( TableServiceClient serviceClient, ILogger<CommandHandlerBase<TCommand>> logger)
+    {
+        _serviceClient = serviceClient;
+        _logger = logger;
+    }
+
+    protected abstract string TableName { get; }
+    protected abstract string ErrorCode { get; }
+    protected abstract string ErrorMessage { get; }
+
+    public virtual async Task<Result> ExecuteAsync(TCommand command)
+    {
+        try
+        {
+            var tableClient = _serviceClient.GetTableClient(TableName);
+            await tableClient.CreateIfNotExistsAsync();
+
+            var entity = GetTableEntity(command);
+            var operation = await SaveAsync(tableClient, entity);
+
+            return operation;
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, ErrorMessage);
+        }
+
+        return Result.Failure(ErrorCode, ErrorMessage);
+    }
+
+    protected abstract TableEntity GetTableEntity(TCommand command);
+
+    protected virtual async Task<Result> SaveAsync(TableClient client, TableEntity entity)
+    {
+        var response = await client.UpsertEntityAsync(entity, TableUpdateMode.Replace);
+        if (response.IsError)
+        {
+            _logger.LogError("upsert error: {FailedReason}", response.ReasonPhrase);
+            return Result.Failure(ErrorCode, ErrorMessage);
+        }
+
+        return Result.Success();
+    }
+}

@@ -2,6 +2,7 @@
 
 public class MessagingConfig
 {
+    public string CancellationsTable { get; set; }
     public string HotelCancellationsQueue { get; set; }
     public int PollingSeconds { get; set; }
 
@@ -10,5 +11,6 @@ public class MessagingConfig
     public MessagingConfig()
     {
         HotelCancellationsQueue = string.Empty;
+        CancellationsTable = string.Empty;
     }
 }

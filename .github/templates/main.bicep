@@ -6,6 +6,7 @@ param containerImage string
 param hotelCancellationQueue string
 param pollingInSeconds int
 param visibilityInSeconds int
+param cancellationsTable string
 
 var storageName = 'sg${appName}${environmentName}'
 var aciName = 'aci-${appName}-${environmentName}'
@@ -29,7 +30,8 @@ module containerInstance 'aci/template.bicep' = {
     hotelCancellationQueue: hotelCancellationQueue
     pollingSeconds: pollingInSeconds
     visibilityInSeconds: visibilityInSeconds
-    storageAccount: storageName  
+    storageAccount: storageName 
+    cancellationsTable: cancellationsTable 
   }
   dependsOn: [
     storageAccount
@@ -41,6 +43,20 @@ module rbacqueue 'rbac/template.bicep'= {
   params: {    
     accessibility: 'queue_read_write'
     friendlyName: '${appName}queueaccess'
+    principalId: containerInstance.outputs.managedId
+    storageAccountName: storageName
+  }
+  dependsOn:[
+    containerInstance
+    storageAccount
+  ]
+}
+
+module rbactables 'rbac/template.bicep'= {
+  name: '${appName}-rbactables'
+  params: {    
+    accessibility: 'table_write'
+    friendlyName: '${appName}tableaccess'
     principalId: containerInstance.outputs.managedId
     storageAccountName: storageName
   }
