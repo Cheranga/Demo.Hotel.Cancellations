@@ -1,6 +1,8 @@
-﻿using Demo.Hotel.Cancellations.Infrastructure.Messaging;
+﻿using Demo.Hotel.Cancellations.Features.Shared;
+using Demo.Hotel.Cancellations.Infrastructure.Messaging;
 using Demo.Hotel.Cancellations.Shared;
 using FluentValidation;
+using Microsoft.FeatureManagement;
 
 namespace Demo.Hotel.Cancellations.Features.CancelHotelBooking;
 
@@ -34,6 +36,8 @@ public class CancelHotelBookingService : ICancelHotelBookingService
         }
 
         var publishOperation = await _messagePublisher.PublishAsync(request);
+        
+        _logger.LogInformation("{CorrelationId} cancel booking request submitted", request.CorrelationId);
         return publishOperation;
     }
 }

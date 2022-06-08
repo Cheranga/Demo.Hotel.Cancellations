@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using FluentValidation.Results;
 
-namespace Demo.Hotel.Cancellations.Shared;
+namespace Demo.Hotel.Cancellations.Features.Shared;
 
 public abstract class ModelValidatorBase<T> : AbstractValidator<T>
 {

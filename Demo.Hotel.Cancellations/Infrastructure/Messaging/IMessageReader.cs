@@ -1,4 +1,6 @@
 ﻿using Azure.Storage.Queues;
+using Demo.Hotel.Cancellations.Features;
+using Demo.Hotel.Cancellations.Features.Shared;
 using Demo.Hotel.Cancellations.Shared;
 using Newtonsoft.Json;
 
@@ -42,6 +44,8 @@ public class MessageReader : IMessageReader
     public async Task<Result<TData>> ReadMessageAsync<TData>(MessageReadOptions options, CancellationToken cancellationToken) where TData : class
     {
         var queueClient = _queueServiceClient.GetQueueClient(options.QueueName);
+        await queueClient.CreateIfNotExistsAsync(cancellationToken: cancellationToken);
+        
         var exists = await queueClient.ExistsAsync(cancellationToken);
         if (!exists)
         {

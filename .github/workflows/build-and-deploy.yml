@@ -33,4 +33,77 @@ jobs:
         run: dotnet restore
 
       - name: Build Projects      
-        run: dotnet build --no-restore -c Release 
+        run: dotnet build --no-restore -c Release
+
+      - name: Publish Artifacts - Deployment Templates
+        uses: actions/upload-artifact@v3
+        with:
+          name: deploy
+          path: ./.github/templates
+          if-no-files-found: error        
+
+  deploytodev:
+    environment: DEV
+    name: DEV
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate Build Number
+        id: generatebuildnumber
+        run: |
+          echo "BUILD_VERSION=$(date +%Y%m%d%H%M)" >> $GITHUB_ENV
+      - name: Build Image and Publish
+        uses: Cheranga/GitHubActions/buildandpushtodockerhub@master
+        with:
+          dockerUserName: ${{secrets.DOCKER_USER}}
+          dockerPassword: ${{secrets.DOCKER_PASSWORD}}
+          dockerFilePath: Demo.Hotel.Cancellations/Dockerfile
+          imageName: democancelhotelbooking
+          imageTag: ${{ env.BUILD_VERSION }}   
+
+      - name: Download Artifact - Templates
+        uses: actions/download-artifact@v3
+        with:
+          name: deploy
+          path: deploy
+      
+      - name: Create Resource Group - ${{ env.RG_NAME }}
+        uses: Cheranga/GitHubActions/createresourcegroup@master
+        with:
+          credentials: ${{ secrets.AZURE_CREDENTIALS }}
+          name: ${{ env.RG_NAME }}-dev
+          location: ${{ env.RG_LOCATION }}
+
+      - name: Login to Azure CLI       
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}      
+
+      - name: Provision Resources
+        uses: azure/arm-deploy@v1 
+        env:
+          HotelCancellationQueue: 'hotelcancellations'
+          PollingInSeconds: 30
+          VisibilityInSeconds: 300
+          CancellationsTable: 'cancellations'
+        with:
+          failOnStdErr: false
+          deploymentName: ${{ env.BUILD_VERSION }}-${{ env.APP_NAME }}
+          resourceGroupName: ${{ env.RG_NAME }}-dev
+          template: deploy/main.bicep
+          parameters: >            
+            buildNumber=${{ env.BUILD_VERSION }}
+            appName=${{ env.APP_NAME }}
+            environmentName=dev
+            location=${{ env.RG_LOCATION }}
+            containerImage=${{ secrets.DOCKER_USER }}/democancelhotelbooking:${{ env.BUILD_VERSION }}            
+            hotelCancellationQueue=${{ env.HotelCancellationQueue }}
+            pollingInSeconds=${{ env.PollingInSeconds }}
+            visibilityInSeconds=${{ env.VisibilityInSeconds }}
+            cancellationsTable=${{ env.CancellationsTable }}
+
+      - name: Logout from Azure CLI     
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            az logout                         
