@@ -71,19 +71,19 @@ resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2021-09-01'
               value: storageAccount
             }
             {
-              name: 'CancellationsTable'
+              name: 'MessagingConfig__CancellationsTable'
               value: cancellationsTable
             }
             {
-              name: 'HotelCancellationsQueue'
+              name: 'MessagingConfig__HotelCancellationsQueue'
               value: hotelCancellationQueue
             }
             {
-              name: 'VisibilityInSeconds'
+              name: 'MessagingConfig__VisibilityInSeconds'
               value: string(visibilityInSeconds)
             }
             {
-              name: 'PollingSeconds'
+              name: 'MessagingConfig__PollingSeconds'
               value: string(pollingSeconds)
             }
           ]

@@ -2,6 +2,7 @@
 using Demo.Hotel.Cancellations.Features.Shared;
 using Demo.Hotel.Cancellations.Shared;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.FeatureManagement.Mvc;
 
 namespace Demo.Hotel.Cancellations.Features.CancelHotelBooking;
 
@@ -17,6 +18,7 @@ public class CancelHotelBookingController : ControllerBase
         _responseGenerator = responseGenerator;
     }
 
+    [FeatureGate(Features.LockTripCancellation)]
     [HttpPost("api/cancel/hotel")]
     public async Task<IActionResult> AcceptCancellationAsync([FromBody] [Required] CancelHotelBookingRequest request)
     {

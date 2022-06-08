@@ -2,6 +2,7 @@
 using Demo.Hotel.Cancellations.Infrastructure.Messaging;
 using Demo.Hotel.Cancellations.Shared;
 using FluentValidation;
+using Microsoft.FeatureManagement;
 
 namespace Demo.Hotel.Cancellations.Features.CancelHotelBooking;
 
