@@ -17,6 +17,7 @@ module storageAccount 'storageaccount/template.bicep' = {
     location: location
     name: storageName
     queues: hotelCancellationQueue
+    tables: cancellationsTable
   }
 }
 
