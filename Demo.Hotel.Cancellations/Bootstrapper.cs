@@ -94,24 +94,24 @@ public static class Bootstrapper
         {
             var configuration = builder.Configuration;
 
-            if (builder.Environment.IsDevelopment())
-            {
-                var messagingConfig = configuration.GetSection(nameof(MessagingConfig)).Get<MessagingConfig>();
-                return messagingConfig;
-            }
-
-            var hotelCancellationQueue = configuration[nameof(MessagingConfig.HotelCancellationsQueue)];
-            var cancellationsTable = configuration[nameof(MessagingConfig.CancellationsTable)];
-            int.TryParse(configuration[nameof(MessagingConfig.PollingSeconds)], out var pollingSeconds);
-            int.TryParse(configuration[nameof(MessagingConfig.VisibilityInSeconds)], out var visibilityInSeconds);
-
-            return new MessagingConfig
-            {
-                CancellationsTable = cancellationsTable,
-                HotelCancellationsQueue = hotelCancellationQueue,
-                PollingSeconds = pollingSeconds,
-                VisibilityInSeconds = visibilityInSeconds
-            };
+            // if (builder.Environment.IsDevelopment())
+            // {
+            var messagingConfig = configuration.GetSection(nameof(MessagingConfig)).Get<MessagingConfig>();
+            return messagingConfig;
+            // }
+            //
+            // var hotelCancellationQueue = configuration[nameof(MessagingConfig.HotelCancellationsQueue)];
+            // var cancellationsTable = configuration[nameof(MessagingConfig.CancellationsTable)];
+            // int.TryParse(configuration[nameof(MessagingConfig.PollingSeconds)], out var pollingSeconds);
+            // int.TryParse(configuration[nameof(MessagingConfig.VisibilityInSeconds)], out var visibilityInSeconds);
+            //
+            // return new MessagingConfig
+            // {
+            //     CancellationsTable = cancellationsTable,
+            //     HotelCancellationsQueue = hotelCancellationQueue,
+            //     PollingSeconds = pollingSeconds,
+            //     VisibilityInSeconds = visibilityInSeconds
+            // };
         });
     }
 }

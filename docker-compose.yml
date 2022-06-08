@@ -6,9 +6,10 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: "Development"      
       StorageAccount: "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://host.docker.internal:10000/devstoreaccount1;QueueEndpoint=http://host.docker.internal:10001/devstoreaccount1;TableEndpoint=http://host.docker.internal:10002/devstoreaccount1"
-      MessagingConfig:HotelCancellationsQueue: "hotelcancellations"
-      MessagingConfig:VisibilityInSeconds: "300"
-      MessagingConfig:PollingSeconds: "10"
+      MessagingConfig__CancellationsTable: "cancellations"
+      MessagingConfig__HotelCancellationsQueue: "hotelcancellations"
+      MessagingConfig__VisibilityInSeconds: "300"
+      MessagingConfig__PollingSeconds: "10"
     volumes:
       - ${APPDATA}\AppData\Roaming\microsoft\UserSecrets\:/root/.microsoft/usersecrets
     ports:

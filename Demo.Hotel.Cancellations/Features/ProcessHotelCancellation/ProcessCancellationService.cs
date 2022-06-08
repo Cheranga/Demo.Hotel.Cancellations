@@ -1,22 +1,27 @@
-﻿using Demo.Hotel.Cancellations.Features.CancelHotelBooking;
+﻿using Demo.Hotel.Cancellations.Extensions;
+using Demo.Hotel.Cancellations.Features.CancelHotelBooking;
 using Demo.Hotel.Cancellations.Features.SaveCancellations;
 using Demo.Hotel.Cancellations.Infrastructure;
 using Demo.Hotel.Cancellations.Infrastructure.DataAccess;
 using Demo.Hotel.Cancellations.Infrastructure.Messaging;
 using Demo.Hotel.Cancellations.Shared;
+using Microsoft.FeatureManagement;
 
 namespace Demo.Hotel.Cancellations.Features.ProcessHotelCancellation;
 
 public class ProcessCancellationService : BackgroundService
 {
+    private readonly IFeatureManager _featureManager;
     private readonly IServiceProvider _serviceProvider;
     private readonly IMessageReader _messageReader;
     private readonly ILogger<ProcessCancellationService> _logger;
 
-    public ProcessCancellationService(IServiceProvider serviceProvider,
+    public ProcessCancellationService(IFeatureManager featureManager,
+        IServiceProvider serviceProvider,
         IMessageReader messageReader,
         ILogger<ProcessCancellationService> logger)
     {
+        _featureManager = featureManager;
         _serviceProvider = serviceProvider;
         _messageReader = messageReader;
         _logger = logger;
@@ -49,6 +54,13 @@ public class ProcessCancellationService : BackgroundService
 
     private async Task<Result> SaveCancellationDataAsync(IServiceScope scope, CancelHotelBookingRequest request)
     {
+        var isEnable = await _featureManager.IsFeatureEnabled(Features.SaveLockTripCancellation);
+        if (!isEnable)
+        {
+            _logger.LogWarning("{Feature} is not enabled", Features.SaveLockTripCancellation);
+            return Result.Success();
+        }
+        
         var saveCancellationCommand = new SaveCancellationCommand
         {
             CorrelationId = request.CorrelationId,
