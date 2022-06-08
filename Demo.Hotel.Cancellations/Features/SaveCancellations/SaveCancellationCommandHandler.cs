@@ -21,6 +21,7 @@ public class SaveCancellationCommandHandler : CommandHandlerBase<SaveCancellatio
     protected override string TableName => _config.CancellationsTable;
     protected override string ErrorCode => ErrorCodes.SaveCancelDataError;
     protected override string ErrorMessage => ErrorMessages.SaveCancelDataError;
+    protected override TableUpdateMode UpsertMode => TableUpdateMode.Replace;
 
     protected override TableEntity GetTableEntity(SaveCancellationCommand command)
     {

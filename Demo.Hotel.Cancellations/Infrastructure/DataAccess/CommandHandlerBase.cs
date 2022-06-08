@@ -21,6 +21,8 @@ public abstract class CommandHandlerBase<TCommand> : ICommandHandler<TCommand> w
     protected abstract string TableName { get; }
     protected abstract string ErrorCode { get; }
     protected abstract string ErrorMessage { get; }
+    
+    protected abstract TableUpdateMode UpsertMode { get; }
 
     public virtual async Task<Result> ExecuteAsync(TCommand command)
     {
@@ -52,7 +54,7 @@ public abstract class CommandHandlerBase<TCommand> : ICommandHandler<TCommand> w
 
     protected virtual async Task<Result> SaveAsync(TableClient client, TableEntity entity)
     {
-        var response = await client.UpsertEntityAsync(entity, TableUpdateMode.Replace);
+        var response = await client.UpsertEntityAsync(entity, UpsertMode);
         if (response.IsError)
         {
             _logger.LogError("upsert error: {FailedReason}", response.ReasonPhrase);
