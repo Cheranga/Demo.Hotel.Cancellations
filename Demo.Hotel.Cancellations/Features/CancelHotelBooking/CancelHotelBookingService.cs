@@ -31,7 +31,7 @@ public class CancelHotelBookingService : ICancelHotelBookingService
         var validationResult = await _validator.ValidateAsync(request);
         if (!validationResult.IsValid)
         {
-            _logger.LogWarning("{ErrorCode} invalid request", ErrorCodes.InvalidRequest);
+            _logger.LogWarning("{ErrorCode} invalid request received {@Request}", ErrorCodes.InvalidRequest, request);
             return Result.Failure(ErrorCodes.InvalidRequest, validationResult);
         }
 

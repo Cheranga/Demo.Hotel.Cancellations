@@ -15,6 +15,7 @@ using Demo.Hotel.Cancellations.Shared;
 using FluentValidation;
 using Microsoft.Extensions.Azure;
 using Serilog;
+using Serilog.Events;
 
 namespace Demo.Hotel.Cancellations;
 
@@ -36,10 +37,16 @@ public static class Bootstrapper
     {
         builder.Host.UseSerilog((_, configuration) =>
         {
-            configuration.MinimumLevel.Debug()
-                .WriteTo.Console(outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}");
+            configuration.MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+                .MinimumLevel.Override("Azure", LogEventLevel.Warning)
+                .Enrich.FromLogContext()
+                .Enrich.WithMachineName()
+                .Enrich.WithProperty("Assembly", typeof(Program).Assembly.GetName().Name);
+
+            configuration.WriteTo.Console();
         });
     }
+
 
     private static void RegisterHandlers(IServiceCollection services)
     {
@@ -94,7 +101,7 @@ public static class Bootstrapper
         {
             var configuration = builder.Configuration;
             var messagingConfig = configuration.GetSection(nameof(MessagingConfig)).Get<MessagingConfig>();
-            
+
             return messagingConfig;
         });
     }
