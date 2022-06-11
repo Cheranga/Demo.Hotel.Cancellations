@@ -12,9 +12,15 @@ on:
   pull_request:
     branches:
       - main
+    paths-ignore:
+      - README.md
+      - .gitignore
   push:
     branches:
       - main
+    paths-ignore:
+      - README.md
+      - .gitignore
     
 jobs: 
   build:
@@ -34,6 +40,9 @@ jobs:
 
       - name: Build Projects      
         run: dotnet build --no-restore -c Release
+
+      - name: Test Projects
+        run: dotnet test --no-restore --verbosity normal
 
       - name: Publish Artifacts - Deployment Templates
         uses: actions/upload-artifact@v3

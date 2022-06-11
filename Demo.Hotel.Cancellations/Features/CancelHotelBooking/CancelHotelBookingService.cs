@@ -34,7 +34,7 @@ public class CancelHotelBookingService : ICancelHotelBookingService
             _logger.LogWarning("{ErrorCode} invalid request received {@Request}", ErrorCodes.InvalidRequest, request);
             return Result.Failure(ErrorCodes.InvalidRequest, validationResult);
         }
-
+        
         var publishOperation = await _messagePublisher.PublishAsync(request);
         
         _logger.LogInformation("{CorrelationId} cancel booking request submitted", request.CorrelationId);

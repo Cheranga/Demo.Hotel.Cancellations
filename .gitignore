@@ -6,3 +6,9 @@ Demo.Hotel.Cancellations/bin/Debug/net6.0/
 Demo.Hotel.Cancellations/obj/Debug/net6.0/
 
 Demo.Hotel.Cancellations/obj/
+
+Demo.Hotel.Cancellations.Tests/obj/
+
+Demo.Hotel.Cancellations.Tests/bin/Debug/net6.0/
+
+*.user
